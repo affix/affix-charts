@@ -3,8 +3,8 @@ pipeline {
       label "jenkins-maven"
     }
     environment {
-      ORG               = 'saturnism'
-      APP_NAME          = 'jx-demo'
+      ORG               = 'affix'
+      APP_NAME          = 'nextcloud'
       CHARTMUSEUM_CREDS = credentials('jenkins-x-chartmuseum')
     }
     stages {
@@ -19,6 +19,7 @@ pipeline {
         }
         steps {
          container('maven') {
+           sh 'cd nextcloud'
            sh "make preview"
            sh "jx preview --app $APP_NAME --dir ../.."
          }
@@ -29,13 +30,15 @@ pipeline {
           branch 'master'
         }
         steps {
-          container('maven') {
-            sh "echo \$(jx-release-version) > VERSION"
-            // release the helm chart
-            sh 'make release'
+          dir('nextcloud') {
+            container('maven') {
+              sh "echo \$(jx-release-version) > VERSION"
+              // release the helm chart
+              sh 'make release'
 
-            // promote through all 'Auto' promotion Environments
-            sh 'jx promote -b --all-auto --timeout 1h --version \$(cat ../../VERSION)'
+              // promote through all 'Auto' promotion Environments
+              sh 'jx promote -b --all-auto --timeout 1h --version \$(jx-release-version)'
+            }
           }
         }
       }
