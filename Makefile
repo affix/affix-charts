@@ -1,6 +1,6 @@
 CHART_REPO := http://jenkins-x-chartmuseum:8080
 CURRENT=$(pwd)
-NAME := jx-demo
+NAME := nextcloud
 OS := $(shell uname)
 RELEASE_VERSION := $(shell cat ../../VERSION)
 
@@ -24,7 +24,6 @@ clean:
 	rm -rf ${NAME}*.tgz
 
 release: clean
-	helm dep up
 	helm dependency build
 	helm lint
 	helm init --client-only
