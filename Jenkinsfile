@@ -35,9 +35,6 @@ pipeline {
               sh "echo \$(jx-release-version) > VERSION"
               // release the helm chart
               sh 'make release'
-
-              // promote through all 'Auto' promotion Environments
-              sh 'jx promote -b --all-auto --timeout 1h --version \$(jx-release-version)'
             }
           }
         }
